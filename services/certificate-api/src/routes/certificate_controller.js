@@ -108,12 +108,14 @@ function padDigit(digit, totalDigits = 2) {
 }
 
 const getRequestBody = async (req) => {
+    console.log(req,'req')
     const buffers = []
     for await (const chunk of req) {
         buffers.push(chunk)
     }
 
     const data = Buffer.concat(buffers).toString();
+    // console.log("Data: ", data);
     if (data === "") return undefined;
     return JSON.parse(data);
 };
@@ -122,11 +124,17 @@ async function generateRawCertificate(certificate, templateUrl, entityId, entity
     let certificateRaw = certificate;
     // TODO: based on type template will be picked
     const certificateTemplateUrl = templateUrl;
+    console.log(certificateTemplateUrl, 'certificateTemplateUrl')
+    
     const qrCodeType = envData.qrType || '';
+    
     let qrData;
+    
     console.log('QR Code type: ', qrCodeType);
-    if (qrCodeType.toUpperCase() === URL) {
+    
+    if (qrCodeType.toUpperCase() === URL) {   
         qrData = `${envData.certDomainUrl}/certs/${entityId}?t=${qrCodeType}&entity=${entityName}${process.env.ADDITIONAL_QUERY_PARAMS || ""}`;
+        console.log('QR Data: ', qrData);
     } else {
         const zip = new JSZip();
         zip.file("certificate.json", certificateRaw, {
@@ -145,12 +153,17 @@ async function generateRawCertificate(certificate, templateUrl, entityId, entity
     }
     
     const dataURL = await QRCode.toDataURL(qrData, {scale: 3});  
+    console.log(dataURL,'dataURL inside generateRawCertificate')
     const certificateData = prepareDataForCertificateWithQRCode(certificateRaw, dataURL);
+    console.log(certificateData,'certificateData inside generateRawCertificate')
+    
     return await renderDataToTemplate(certificateTemplateUrl, certificateData);
 }
 
 async function createCertificatePDF(certificate, templateUrl, res, entityId, entityName) {
+    console.log('Got this req', certificate, templateUrl, entityId, entityName);
     let rawCertificate = await generateRawCertificate(certificate, templateUrl, entityId, entityName);
+    console.log(rawCertificate, 'rawCertificate');
     const pdfBuffer = await createPDF(rawCertificate);
     res.statusCode = 200;
     return pdfBuffer;
@@ -160,11 +173,13 @@ function isEmpty(obj) {
 }
 
 function sendResponse(res, statusCode, message) {
+        console.log(message,res, statusCode,'message')
     res.statusCode=statusCode;
     res.end(message);
 }
 
 async function getCertificatePDF(req, res) {
+    console.log(req,'req')
     try {
         const reqBody = await getRequestBody(req)
         if (!reqBody || isEmpty(reqBody)) {
@@ -172,10 +187,14 @@ async function getCertificatePDF(req, res) {
         }
         console.log('Got this req', reqBody);
         let {certificate, templateUrl, entityId, entityName} = reqBody;
+        console.log(reqBody,'176')
+
         if (certificate === "" || templateUrl === "") {
             return sendResponse(res, 400, "Required parameters missing");
         }
+        console.log(res,'before res')
         res = await createCertificatePDF(certificate, templateUrl, res, entityId, entityName);
+        console.log(res,'after res')
         return res
     } catch (err) {
         console.error(err);
@@ -184,6 +203,7 @@ async function getCertificatePDF(req, res) {
 }
 
 async function getCertificate(req, res) {
+
     try {
         const reqBody = await getRequestBody(req)
         if (!reqBody || isEmpty(reqBody)) {
@@ -194,7 +214,9 @@ async function getCertificate(req, res) {
         if (certificate === "" || templateUrl === "") {
             return sendResponse(res, 400, "Required parameters missing");
         }
+        console.log(res,'before res  inside get certifacte ')
         res = await generateRawCertificate(certificate, templateUrl, entityId, entityName);
+        console.log(res,'after res  inside get certifacte ')
         return res
     } catch (err) {
         console.error(err);
@@ -239,6 +261,7 @@ async function renderDataToTemplate(templateFileURL, data) {
     const htmlData = await getTemplate(templateFileURL);
     // console.log('Received ', htmlData);
     const template = getHandleBarTemplate(htmlData);
+    console.log(template,'template inside renderDataToTemplate')
     return template(data);
 }
 
