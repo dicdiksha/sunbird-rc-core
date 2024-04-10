@@ -127,7 +127,7 @@ async function generateRawCertificate(certificate, templateUrl, entityId, entity
     console.log(certificateTemplateUrl, 'certificateTemplateUrl')
     
     const qrCodeType = envData.qrType || '';
-    
+        console.log(envData,'data')
     let qrData;
     
     console.log('QR Code type: ', qrCodeType);
@@ -153,8 +153,9 @@ async function generateRawCertificate(certificate, templateUrl, entityId, entity
     }
     
     const dataURL = await QRCode.toDataURL(qrData, {scale: 3});  
-    console.log(dataURL,'dataURL inside generateRawCertificate')
+    console.log(dataURL,certificateRaw,'dataURL inside generateRawCertificate')
     const certificateData = prepareDataForCertificateWithQRCode(certificateRaw, dataURL);
+    // console.log(certificateData,'certificateData inside generateRawCertificate')
     console.log(certificateData,'certificateData inside generateRawCertificate')
     
     return await renderDataToTemplate(certificateTemplateUrl, certificateData);

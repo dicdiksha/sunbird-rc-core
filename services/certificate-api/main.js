@@ -11,9 +11,12 @@ const server = http.createServer(async (req, res) => {
             res.end("OK")
         } else if (req.method === 'POST' && req.url.startsWith("/api/v1/certificate") && ["application/pdf"].includes(req.headers.accept)) {
             const data = await certificateController.getCertificatePDF(req, res);
+            console.log(data,'pdf path')
             res.end(data)
         } else if (req.method === 'POST' && req.url.startsWith("/api/v1/certificate") && ["text/html", "image/svg+xml"].includes(req.headers.accept)) {
             const data = await certificateController.getCertificate(req, res);
+            console.log(data,'text/html path')
+           
             res.end(data)
         } else {
             res.statusCode = 404;
