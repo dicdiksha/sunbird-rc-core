@@ -286,6 +286,7 @@ async function createPDF(certificate) {
             browser = await puppeteer.launch(browserConfig);
         }
         const page = await browser.newPage();
+        await page.setViewport({width: 1440, height: 900, deviceScaleFactor: 2});
         await page.evaluateHandle('document.fonts.ready');
         await page.setContent(certificate, {
             waitUntil: 'domcontentloaded'
