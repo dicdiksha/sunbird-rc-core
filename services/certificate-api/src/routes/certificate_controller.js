@@ -321,3 +321,8 @@ module.exports = {
     getCertificatePDF,
     getCertificate
 };
+const pdfConfig = {
+    format: 'A4',
+    printBackground: true,
+    scale: 3
+};
