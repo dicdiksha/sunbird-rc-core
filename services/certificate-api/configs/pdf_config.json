@@ -1,5 +1,6 @@
 {
   "format": "A4",
   "printBackground": true,
-  "displayHeaderFooter": true
+  "displayHeaderFooter": true,
+  "scale": 2
 }

@@ -294,9 +294,18 @@ async function createPDF(certificate) {
         // console.log(certificate);
         // await page.goto('data:text/html,' + certificate, {waitUntil: 'networkidle2'});
         await page.evaluateHandle('document.fonts.ready');
-        const pdfBuffer = await page.pdf(pdfConfig);
-
-
+        // const pdfBuffer = await page.pdf(pdfConfig);
+        const pdfBuffer = await page.pdf({
+            format: 'A4',
+            printBackground: true,
+            scale: 2, // Adjust scale for higher resolution
+            margin: {
+                top: '10px',
+                right: '10px',
+                bottom: '10px',
+                left: '10px'
+            }
+        });
         // close the browser
         await page.close()
         return pdfBuffer
