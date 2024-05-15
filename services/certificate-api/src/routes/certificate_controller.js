@@ -298,7 +298,7 @@ async function createPDF(certificate) {
         const pdfBuffer = await page.pdf({
             format: 'A4',
             printBackground: true,
-            scale: 2, // Adjust scale for higher resolution
+            scale: 1, // Adjust scale for higher resolution
             margin: {
                 top: '10px',
                 right: '10px',
