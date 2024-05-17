@@ -189,6 +189,7 @@ async function generateRawCertificate(certificate, templateUrl, entityId, entity
 
 async function createCertificatePDF(certificate, templateUrl, res, entityId, entityName, entity) {
     let rawCertificate = await generateRawCertificate(certificate, templateUrl, entityId, entityName, entity);
+    console.log(rawCertificate,'line 192')
     const pdfBuffer = await createPDF(rawCertificate);
     res.statusCode = 200;
     return pdfBuffer;
@@ -228,11 +229,17 @@ async function getCertificate(req, res) {
             return sendResponse(res, 400, "Bad request");
         }
         console.log('Got this req', reqBody);
+       
         let {certificate, templateUrl, entityId, entityName, entity} = reqBody;
+       
+        console.log('Got this req getCertificate', reqBody);
+       
         if (certificate === "" || templateUrl === "") {
             return sendResponse(res, 400, "Required parameters missing");
         }
+       
         res = await generateRawCertificate(certificate, templateUrl, entityId, entityName, entity);
+       
         return res
     } catch (err) {
         console.error(err);
@@ -272,7 +279,7 @@ const getHandleBarTemplate = (credentialTemplate) => {
 };
 
 async function renderDataToTemplate(templateFileURL, data) {
-    console.log("rendering data to template")
+    console.log("rendering data to template",templateFileURL,data)
     // const htmlData = fs.readFileSync(templateFileURL, 'utf8');
     const htmlData = await getTemplate(templateFileURL);
     // console.log('Received ', htmlData);
@@ -281,10 +288,12 @@ async function renderDataToTemplate(templateFileURL, data) {
 }
 
 async function createPDF(certificate) {
+    console.log(certificate,'line 290 inside create certificate')
     try {
         if (!browser) {
             browser = await puppeteer.launch(browserConfig);
         }
+
         const page = await browser.newPage();
         await page.setViewport({width: 1440, height: 900, deviceScaleFactor: 2});
         await page.evaluateHandle('document.fonts.ready');
