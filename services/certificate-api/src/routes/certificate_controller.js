@@ -144,7 +144,7 @@ const getRequestBody = async (req) => {
 
 function getQRCodeImage(qrData) {
     if (config.ENABLE_CUSTOM_QR_CODE_CANVAS) {
-        console.log(qrData)
+        console.log('qrdata---', qrData)
         const qrCode = new QRCodeCanvas({...qrCodeConfig, "data": qrData,});
         return qrCode.toDataUrl('svg');
     } else {
@@ -314,6 +314,7 @@ function prepareDataForCertificateWithQRCode(certificateRaw, dataURL) {
         qrCode: dataURL
     };
 
+    console.log("certificateData---", certificateData)
     return certificateData;
 }
 
