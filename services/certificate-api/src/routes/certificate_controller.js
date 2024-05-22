@@ -143,11 +143,14 @@ const getRequestBody = async (req) => {
 };
 
 function getQRCodeImage(qrData) {
+    console.log('qrdata---146', qrData)
     if (config.ENABLE_CUSTOM_QR_CODE_CANVAS) {
-        console.log('qrdata---', qrData)
+        console.log('qrdata---if', qrData)
         const qrCode = new QRCodeCanvas({...qrCodeConfig, "data": qrData,});
+        console.log('qrCode---150', qrData)
         return qrCode.toDataUrl('svg');
     } else {
+        console.log('qrCode---else', qrData)
         return QRCode.toDataURL(qrData, {scale: 3});
     }
 }
@@ -172,6 +175,7 @@ async function generateRawCertificate(certificate, templateUrl, entityId, entity
                 return content;
             });
         qrData = zippedData
+        console.log('zippeddata: ', qrData);
         if (zipType) {
             console.log('ZippedData length', String(zippedData).length);
             qrData = `${config.CERTIFICATE_DOMAIN_URL}/certs/${entityId}?t=${config.QR_TYPE}&data=${zippedData}&entity=${entityName}${process.env.ADDITIONAL_QUERY_PARAMS || ""}`;
@@ -184,6 +188,7 @@ async function generateRawCertificate(certificate, templateUrl, entityId, entity
         ...prepareDataForCertificateWithQRCode(certificateRaw, dataURL),
         entity
     };
+    console.log('certificateData: ', certificateData);
     return await renderDataToTemplate(certificateTemplateUrl, certificateData);
 }
 
