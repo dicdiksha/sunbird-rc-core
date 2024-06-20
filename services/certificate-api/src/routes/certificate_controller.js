@@ -163,7 +163,11 @@ async function generateRawCertificate(certificate, templateUrl, entityId, entity
     let qrData;
     console.log('QR Code type: ', qrCodeType);
     if (qrCodeType.toUpperCase() === URL) {
+
+        
+        console.log('qrData ---166',qrData,)
         qrData = `${config.CERTIFICATE_DOMAIN_URL}/certs/${entityId}?t=${qrCodeType}&entity=${entityName}${process.env.ADDITIONAL_QUERY_PARAMS || ""}`;
+        console.log('qrData ---168',qrData,)
     } else {
         const zip = new JSZip();
         zip.file("certificate.json", certificateRaw, {
